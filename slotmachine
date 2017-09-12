@@ -1,0 +1,101 @@
+#include <iostream>
+#include <ctime>
+#include <string>
+
+using namespace std;
+
+double cash = 0;
+double bet = 0;
+
+int val[3][3];
+int valueset[8];
+int topval;
+
+// setting the bet of the user
+void betset(bool debate) {
+		cout << "Bet: ";
+		double bettle = 0;
+		cin >> bettle;\
+    // if 'debate' setting on, cash will be initialized as first bet
+		if (debate) {
+			cash = bettle;
+		}
+    // if bet more than cash, force to retry
+		while (bettle > cash) {
+			cout << "Again!\n";
+			cin >> bettle;
+		}
+    // setting the bet
+		bet = bettle;
+}
+
+void clearboard() {
+  // resetting the slot machine board
+	for (int i = 0; i < 9; i++) {
+		val[i / 3][i % 3] = 0;
+	}
+}
+
+void setboard(int exo) {
+  // setting the slot machine board
+	for (int i = 0; i < 9; i++) {
+		val[i / 3][i % 3] = rand() % exo;
+	}
+}
+
+void printboard() {
+  // print out the slot machine interface
+	cout << "\n      -------\n";
+	cout << "      |" << val[0][0] << "|" << val[0][1] << "|" << val[0][2] << "|\n";
+	cout << "      -------\n";
+	cout << "      |" << val[1][0] << "|" << val[1][1] << "|" << val[1][2] << "|\n";
+	cout << "      -------\n";
+	cout << "      |" << val[2][0] << "|" << val[2][1] << "|" << val[2][2] << "|\n";
+	cout << "      -------\n\n";
+}
+
+void tellboard() {
+	topval = 0;
+	for (int i = 0; i < 3; i++) {
+		if ((val[i][0] == val[i][1]) && (val[i][1] == val[i][2])) {
+			valueset[topval] = val[i][0];
+			topval++;
+		}
+		if ((val[0][i] == val[1][i]) && (val[1][i] == val[2][i])) {
+			valueset[topval] = val[0][i];
+			topval++;
+		}
+	}
+}
+
+void main() {
+	srand((unsigned int)time(NULL));
+	betset(true);
+
+	while (true) {
+		cout << "------------------------\n";
+		betset(false);	
+		
+		clearboard();
+		setboard(2);
+		tellboard();
+		printboard();
+
+		for (int i = 0; i < topval; i++) {
+			switch (valueset[i]) {
+			case 0: cash += (bet * .75);  break;
+			case 1: cash += (bet * 1); break;
+			case 2: cash += (bet * 1.25); break;
+			}
+		}
+		cash -= bet;
+		cout << "------------------------\n";
+		cout << "Matches: " << topval << "\n";
+		cout << "Cash: " << cash << "\n";
+		if (cash <= 1) {
+			cout << "Sad!\n";
+			cash = 1;
+			cout << "Cash: " << cash << "\n";
+		}
+	}
+}
